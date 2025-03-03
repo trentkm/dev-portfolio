@@ -1,7 +1,7 @@
 // Navbar.jsx
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { Link } from 'react-scroll';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import { Link } from "react-scroll";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -12,32 +12,32 @@ const Navbar = () => {
       setScrolled(window.scrollY > 50);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navItems = [
-    { name: 'Home', to: 'hero' },
-    { name: 'About', to: 'about' },
-    { name: 'Skills', to: 'skills' },
-    { name: 'Projects', to: 'projects' },
-    { name: 'Contact', to: 'contact' }
+    { name: "Home", to: "hero" },
+    { name: "About", to: "about" },
+    { name: "Skills", to: "skills" },
+    { name: "Projects", to: "projects" },
+    { name: "Contact", to: "contact" },
   ];
 
   return (
     <NavContainer $scrolled={scrolled}>
       <LogoContainer>
-        <LogoText>YD</LogoText>
+        <LogoText>Trent Morrell</LogoText>
       </LogoContainer>
-      
+
       <MobileMenuButton onClick={() => setMenuOpen(!menuOpen)}>
         <span></span>
         <span></span>
         <span></span>
       </MobileMenuButton>
-      
+
       <NavLinks $menuOpen={menuOpen}>
-        {navItems.map(item => (
+        {navItems.map((item) => (
           <NavItem key={item.name}>
             <NavLink
               to={item.to}
@@ -51,6 +51,15 @@ const Navbar = () => {
             </NavLink>
           </NavItem>
         ))}
+        <NavItem>
+          <ResumeLink
+            href="/trenton-morrell-resume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Resume <DownloadIcon />
+          </ResumeLink>
+        </NavItem>
       </NavLinks>
     </NavContainer>
   );
@@ -109,7 +118,38 @@ const NavLinks = styled.ul`
   }
 `;
 
-const NavItem = styled.li``;
+const NavItem = styled.li`
+  display: flex;
+  align-items: center; // Ensures vertical alignment
+`;
+
+// Updated ResumeLink with better alignment styling
+const ResumeLink = styled.a`
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  background: rgba(99, 179, 237, 0.2);
+  border: 1px solid rgba(99, 179, 237, 0.3);
+  transition: all 0.2s ease;
+  display: inline-flex; // Changed to inline-flex for better alignment
+  align-items: center;
+  gap: 5px;
+  line-height: normal; // Fixes potential line-height issues
+  margin: 0; // Reset margin that might be affecting alignment
+
+  &:hover {
+    background: rgba(99, 179, 237, 0.3);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+    padding: 0.6rem 1.2rem; // Slightly larger padding for mobile
+  }
+`;
 
 const NavLink = styled(Link)`
   color: white;
@@ -120,16 +160,16 @@ const NavLink = styled(Link)`
   border-radius: 4px;
   transition: all 0.2s ease;
   cursor: pointer;
-  
+
   &:hover {
     background: rgba(255, 255, 255, 0.1);
   }
-  
+
   &.active {
     font-weight: 700;
     background: rgba(46, 204, 113, 0.2);
   }
-  
+
   @media (max-width: 768px) {
     font-size: 1.5rem;
     padding: 1rem 2rem;
@@ -147,7 +187,7 @@ const MobileMenuButton = styled.button`
   cursor: pointer;
   padding: 0;
   z-index: 101;
-  
+
   span {
     width: 30px;
     height: 3px;
@@ -155,9 +195,16 @@ const MobileMenuButton = styled.button`
     border-radius: 3px;
     transition: all 0.3s ease;
   }
-  
+
   @media (max-width: 768px) {
     display: flex;
+  }
+`;
+
+const DownloadIcon = styled.span`
+  &::after {
+    content: "↓";
+    font-size: 0.8rem;
   }
 `;
 

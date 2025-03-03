@@ -1,4 +1,4 @@
-// About.jsx - Updated content based on your resume
+// About.jsx - Fixed version to ensure Facts section appears
 import React from "react";
 import styled, { keyframes } from "styled-components";
 
@@ -10,7 +10,7 @@ export const About = () => {
 
         <AboutContent>
           <ImageContainer>
-            <ProfileImage src="/profile-image.jpg" alt="Trenton Morrell" />
+            <ProfileImage src="/images/profile.png" alt="Trenton Morrell" />
           </ImageContainer>
 
           <TextContent>
@@ -32,7 +32,7 @@ export const About = () => {
             <AboutText>
               I'm passionate about clean code, thoughtful architecture, and
               creating software that makes a meaningful impact. When I'm not
-              coding, you'll find me exploring new technologies, playing soccer,
+              coding, you'll find me exploring new technologies, playing guitar,
               or enjoying outdoor activities in Dallas.
             </AboutText>
 
@@ -42,8 +42,8 @@ export const About = () => {
                 <StatLabel>Years Experience</StatLabel>
               </StatItem>
               <StatItem>
-                <StatNumber>$1M+</StatNumber>
-                <StatLabel>Revenue Impact</StatLabel>
+                <StatNumber>8+</StatNumber>
+                <StatLabel>Major Projects</StatLabel>
               </StatItem>
               <StatItem>
                 <StatNumber>15+</StatNumber>
@@ -53,7 +53,7 @@ export const About = () => {
           </TextContent>
         </AboutContent>
 
-        <FactsSection>
+        <FactsSectionNoAnimation>
           <FactsTitle>Professional Highlights</FactsTitle>
           <FactsGrid>
             <FactCard>
@@ -73,8 +73,8 @@ export const About = () => {
             <FactCard>
               <FactIcon>🚀</FactIcon>
               <FactText>
-                Led multiple successful product launches generating over \$1M in
-                annual revenue
+                Led product launches with significant revenue contributions
+                across multiple business units
               </FactText>
             </FactCard>
             <FactCard>
@@ -84,7 +84,7 @@ export const About = () => {
               </FactText>
             </FactCard>
           </FactsGrid>
-        </FactsSection>
+        </FactsSectionNoAnimation>
       </ContentContainer>
     </AboutSection>
   );
@@ -271,12 +271,10 @@ const StatLabel = styled.div`
   }
 `;
 
-const FactsSection = styled.div`
+// Removed animation from this section to ensure it appears
+const FactsSectionNoAnimation = styled.div`
   margin-top: 60px;
-  animation: \${fadeIn} 0.8s ease-out forwards;
-  animation-delay: 0.3s;
-  opacity: 0;
-  
+
   @media (max-width: 768px) {
     margin-top: 40px;
   }
