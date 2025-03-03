@@ -1,47 +1,67 @@
-import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import React, { useState } from "react";
+import styled, { keyframes } from "styled-components";
+import CommandPalette from "./CommandPallete";
 // Add performance optimization for mobile
-const RetroBackground = () => {
+const RetroBackground = ({ settings }) => {
   const isMobile = window.innerWidth <= 768;
-  
+
   return (
     <Scene>
-      <Sky>
-        <Stars />
-        <Moon />
-        {/* Reduce number of effects on mobile */}
-        {!isMobile && <NorthernLights />}
-        <NorthernLights style={{ animationDelay: '-4s', top: '10%' }} />
-        <Snow />
-        {!isMobile && (
+      <Sky $isDayTime={settings.isDayTime}>
+        {settings.isDayTime ? (
+          <Sun />
+        ) : (
           <>
-            <Snow style={{ animationDelay: '-2s' }} />
-            <Snow style={{ animationDelay: '-4s' }} />
+            <Stars />
+            <Moon />
           </>
         )}
-        <Fog />
+        {settings.showNorthernLights && (
+          <>
+            <NorthernLights />
+            <NorthernLights style={{ animationDelay: "-4s", top: "10%" }} />
+          </>
+        )}
+        <Snow
+          $intensity={settings.snowIntensity}
+          $windEffect={settings.windEffect}
+        />
         <Mountains>
           <Mountain />
-          <Mountain style={{ left: '30%', height: '180px' }} />
-          <Mountain style={{ left: '60%', height: '220px' }} />
-          {!isMobile && (
-            <>
-              <Mountain style={{ left: '80%', height: '160px' }} />
-              <Mountain style={{ left: '20%', height: '140px', zIndex: '-1', opacity: '0.8' }} />
-            </>
-          )}
+          <Mountain style={{ left: "30%", height: "180px" }} />
+          <Mountain style={{ left: "60%", height: "220px" }} />
+          <Mountain style={{ left: "80%", height: "160px" }} />
+          <Mountain
+            style={{
+              left: "20%",
+              height: "140px",
+              zIndex: "-1",
+              opacity: "0.8",
+            }}
+          />
+          <Mountain
+            style={{
+              left: "50%",
+              height: "190px",
+              zIndex: "-1",
+              opacity: "0.7",
+            }}
+          />
         </Mountains>
+        <Fog />
       </Sky>
-      <Ground>
+      <Ground $isDayTime={settings.isDayTime}>
         <SnowPile />
-        <Cabin />
-        <Tree style={{ left: '10%' }} />
-        <Tree style={{ left: '25%' }} />
+        <Cabin>
+          <ChimneySmoke />
+        </Cabin>
+        <Tree style={{ left: "10%" }} />
+        <Tree style={{ left: "25%" }} />
         {!isMobile && (
           <>
-            <Tree style={{ left: '45%' }} />
-            <Tree style={{ left: '65%' }} />
-            <Tree style={{ left: '85%' }} />
+            <Tree style={{ left: "45%" }} />
+            <Tree style={{ left: "65%" }} />
+            <Tree style={{ left: "85%" }} />
           </>
         )}
       </Ground>
@@ -49,20 +69,22 @@ const RetroBackground = () => {
   );
 };
 
-
 // Animations
 const dayNightCycle = keyframes`
   0%, 100% { background: #0f2027; }
   50% { background: #3498db; }
 `;
 
-const snowfall = keyframes`
-  0% {
-    transform: translateY(-100%) translateX(-50%);
-  }
-  100% {
-    transform: translateY(100vh) translateX(50%);
-  }
+
+const Sun = styled.div`
+  position: absolute;
+  top: 50px;
+  right: 100px;
+  width: 60px;
+  height: 60px;
+  background: #ffd700;
+  border-radius: 50%;
+  box-shadow: 0 0 40px #ffd700;
 `;
 
 const northernLights = keyframes`
@@ -92,6 +114,18 @@ const chimneySmoke = keyframes`
 `;
 
 // Styled Components
+// Update the Sky styled component
+const Sky = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 70%;
+  background: ${(props) => (props.$isDayTime ? "#87CEEB" : "#0f2027")};
+  transition: background 1s ease;
+`;
+
+// And update the Scene component to remove the dayNightCycle animation
 const Scene = styled.div`
   position: fixed;
   top: 0;
@@ -100,31 +134,21 @@ const Scene = styled.div`
   height: 100%;
   z-index: -1;
   overflow: hidden;
-  animation: ${dayNightCycle} 60s linear infinite;
-`;
-
-const Sky = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 70%;
-  background: transparent;
 `;
 
 const Stars = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
-  
+
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     width: 2px;
     height: 2px;
     background: white;
     box-shadow: ${() => {
-      let stars = '';
+      let stars = "";
       for (let i = 0; i < 100; i++) {
         const x = Math.floor(Math.random() * 100);
         const y = Math.floor(Math.random() * 50);
@@ -134,7 +158,6 @@ const Stars = styled.div`
     }};
     animation: ${twinkle} 3s ease-in-out infinite;
   }
-    
 `;
 
 const Moon = styled.div`
@@ -153,7 +176,13 @@ const NorthernLights = styled.div`
   top: 0;
   width: 200%;
   height: 40%;
-  background: linear-gradient(to right, transparent, #80ff72, #7ee8fa, transparent);
+  background: linear-gradient(
+    to right,
+    transparent,
+    #80ff72,
+    #7ee8fa,
+    transparent
+  );
   transform: rotate(20deg);
   animation: ${northernLights} 8s ease-in-out infinite;
   opacity: 0.3;
@@ -177,7 +206,7 @@ const Mountain = styled.div`
   border-bottom: 200px solid #2c3e50;
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 50px;
     left: -100px;
@@ -195,35 +224,83 @@ const Fog = styled.div`
   bottom: 30%;
   width: 100%;
   height: 50px;
-  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
   animation: ${fogMove} 20s linear infinite;
 `;
 
-const Snow = styled.div`
+const Snow = styled.div.attrs((props) => ({
+  $intensity: props.$intensity || 1,
+  $windEffect: props.$windEffect || false,
+}))`
   position: absolute;
   width: 100%;
   height: 100%;
   pointer-events: none;
 
-  &::after {
-    content: '';
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background: white;
-    border-radius: 50%;
-    box-shadow: ${() => {
-      let shadows = '';
-      for (let i = 0; i < 50; i++) {
+  &::before,
+  &::after,
+  & {
+    content: "";
+    position: fixed;
+    top: -100vh;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: ${({ $intensity }) => {
+      let shadows = [];
+      const numberOfSnowflakes = Math.floor(20 * ($intensity || 1)); // Added fallback for intensity
+      for (let i = 0; i < numberOfSnowflakes; i++) {
         const x = Math.floor(Math.random() * 100);
         const y = Math.floor(Math.random() * 100);
-        shadows += `${x}vw ${y}vh #fff,`;
+        const size = Math.random() * 6 + 4; // Sizes between 4-10px
+        shadows.push(`radial-gradient(${size}px ${size}px at ${x}vw ${y}vh, 
+          rgba(255, 255, 255, 1), 
+          rgba(255, 255, 255, 0.8) 40%, 
+          rgba(255, 255, 255, 0.2) 70%,
+          transparent 100%)`);
       }
-      return shadows.slice(0, -1);
+      return shadows.join(",");
     }};
-    animation: ${snowfall} 10s linear infinite;
+    opacity: 0.9;
+    animation: ${({ $windEffect }) => ($windEffect ? snowfallWind : snowfall)}
+      ${({ $intensity }) => Math.max(3, 15 / ($intensity || 1))}s linear
+      infinite;
+  }
+
+  &::before {
+    animation-delay: -${({ $intensity }) => Math.max(2, 5 / ($intensity || 1))}s;
+    opacity: 0.7;
+  }
+
+  &::after {
+    animation-delay: -${({ $intensity }) => Math.max(1, 10 / ($intensity || 1))}s;
+    opacity: 0.5;
   }
 `;
+
+const snowfall = keyframes`
+  from {
+    transform: translateY(-10%);
+  }
+  to {
+    transform: translateY(110%);
+  }
+`;
+
+const snowfallWind = keyframes`
+  from {
+    transform: translate(-5%, -10%);
+  }
+  to {
+    transform: translate(15%, 110%);
+  }
+`;
+
 
 const Ground = styled.div`
   position: absolute;
@@ -231,8 +308,11 @@ const Ground = styled.div`
   left: 0;
   width: 100%;
   height: 30%;
-  background: #fff;
-  background: linear-gradient(to bottom, #ecf0f1, #fff);
+  background: ${(props) =>
+    props.$isDayTime
+      ? "linear-gradient(to bottom, #ffffff, #f0f0f0)"
+      : "linear-gradient(to bottom, #ecf0f1, #fff)"};
+  transition: background 1s ease;
 `;
 
 const SnowPile = styled.div`
@@ -254,7 +334,7 @@ const Tree = styled.div`
   background: #4a2810;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 50px;
     left: -25px;
@@ -266,7 +346,7 @@ const Tree = styled.div`
   }
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 80px;
     left: -20px;
@@ -284,10 +364,10 @@ const Cabin = styled.div`
   left: 40%;
   width: 100px;
   height: 80px;
-  background: #8B4513;
-  
+  background: #8b4513;
+
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: -40px;
     left: -10px;
@@ -295,18 +375,18 @@ const Cabin = styled.div`
     height: 0;
     border-left: 60px solid transparent;
     border-right: 60px solid transparent;
-    border-bottom: 40px solid #A0522D;
+    border-bottom: 40px solid #a0522d;
   }
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 20px;
     left: 40px;
     width: 20px;
     height: 30px;
-    background: #FFD700;
-    box-shadow: 0 0 10px #FFD700;
+    background: #ffd700;
+    box-shadow: 0 0 10px #ffd700;
   }
 `;
 
@@ -321,7 +401,7 @@ const ChimneySmoke = styled.div`
   animation: ${chimneySmoke} 2s ease-out infinite;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: -15px;
     left: 5px;

@@ -42,19 +42,22 @@ export const Hero = () => {
 };
 
 const HeroSection = styled.section`
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1; // Lower z-index
 `;
 
 const Terminal = styled.div`
-    background: #1d1d1d;
-    border-radius: 10px;
-    box-shadow: 0 20px 68px rgba(0,0,0,0.55);
-    width: 600px;
-    overflow: hidden;
+  background: #1d1d1d;
+  border-radius: 10px;
+  box-shadow: 0 20px 68px rgba(0, 0, 0, 0.55);
+  width: 600px;
+  overflow: hidden;
+  position: relative;
+  z-index: 2; // Explicitly set lower z-index
 `;
 
 const TerminalHeader = styled.div`
