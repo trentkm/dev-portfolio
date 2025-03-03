@@ -1,6 +1,6 @@
 // CommandPalette.jsx
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 const CommandPalette = ({ onCommand, settings }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,6 +12,8 @@ const CommandPalette = ({ onCommand, settings }) => {
   const [lastCommand, setLastCommand] = useState(null);
   const [lastTap, setLastTap] = useState(0);
   const [isInputEnabled, setIsInputEnabled] = useState(!isMobile);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const isMac = navigator.platform.toLowerCase().includes("mac");
 
   const handleClose = () => {
     setIsOpen(false);
@@ -140,62 +142,69 @@ const CommandPalette = ({ onCommand, settings }) => {
     setSwipeStart(null);
   };
 
-  if (!isOpen) {
-    return isMobile ? (
-      <FloatingButton onClick={handleFloatingButtonTap}>⌘</FloatingButton>
-    ) : null;
-  }
-
+  // Replace the current return logic with this:
   return (
-    <Overlay onClick={handleClose}>
-      <Container
-        onClick={(e) => e.stopPropagation()}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        style={{ transform: `translateY(${swipeOffset}px)` }}
-      >
-        <GestureHandle />
-        <SearchInput
-          type="text"
-          placeholder="Type a command..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          readOnly={isMobile && !isInputEnabled}
-          autoFocus={!isMobile}
-          onClick={() => {
-            if (isMobile) {
-              setIsInputEnabled(true);
-              // Optional: focus the input when clicked
-              // You might want to test if this behavior feels right on mobile
-              // e.target.focus();
-            }
-          }}
-        />
+    <>
+      {!isOpen && (
+        <FloatingButtonContainer
+          onMouseEnter={() => setShowTooltip(true)}
+          onMouseLeave={() => setShowTooltip(false)}
+        >
+          <FloatingButton onClick={handleFloatingButtonTap}>⌘</FloatingButton>
+          {showTooltip && <Tooltip>Press {isMac ? "⌘" : "Ctrl"} + K</Tooltip>}
+        </FloatingButtonContainer>
+      )}
 
-        <CommandList>
-          {filteredCommands.map((command, index) => (
-            <CommandItem
-              key={command.id}
-              selected={index === selectedIndex}
-              onClick={() => handleSelect(command.id)}
-              onMouseEnter={() => setSelectedIndex(index)}
-            >
-              <CommandIcon>{command.icon}</CommandIcon>
-              <CommandContent>
-                <CommandLabel>{command.label}</CommandLabel>
-                <CommandDescription>{command.description}</CommandDescription>
-              </CommandContent>
-            </CommandItem>
-          ))}
-        </CommandList>
-        {isMobile && (
-          <MobileTip>
-            Swipe down to dismiss • Double-tap button for last command
-          </MobileTip>
-        )}
-      </Container>
-    </Overlay>
+      {isOpen && (
+        <Overlay onClick={handleClose}>
+          <Container
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            style={{ transform: `translateY(${swipeOffset}px)` }}
+          >
+            <GestureHandle />
+            <SearchInput
+              type="text"
+              placeholder="Type a command..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              readOnly={isMobile && !isInputEnabled}
+              autoFocus={!isMobile}
+              onClick={() => {
+                if (isMobile) {
+                  setIsInputEnabled(true);
+                }
+              }}
+            />
+            <CommandList>
+              {filteredCommands.map((command, index) => (
+                <CommandItem
+                  key={command.id}
+                  selected={index === selectedIndex}
+                  onClick={() => handleSelect(command.id)}
+                  onMouseEnter={() => setSelectedIndex(index)}
+                >
+                  <CommandIcon>{command.icon}</CommandIcon>
+                  <CommandContent>
+                    <CommandLabel>{command.label}</CommandLabel>
+                    <CommandDescription>
+                      {command.description}
+                    </CommandDescription>
+                  </CommandContent>
+                </CommandItem>
+              ))}
+            </CommandList>
+            {isMobile && (
+              <MobileTip>
+                Swipe down to dismiss • Double-tap button for last command
+              </MobileTip>
+            )}
+          </Container>
+        </Overlay>
+      )}
+    </>
   );
 };
 
@@ -295,10 +304,35 @@ const CommandDescription = styled.div`
   font-size: 12px;
 `;
 
-const FloatingButton = styled.button`
+const GestureHandle = styled.div`
+  width: 40px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  margin: 8px auto;
+
+  @media (min-width: 769px) {
+    display: none;
+  }
+`;
+
+const MobileTip = styled.div`
+  text-align: center;
+  padding: 8px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+`;
+
+// Add these new styled components
+const FloatingButtonContainer = styled.div`
   position: fixed;
   bottom: 20px;
   right: 20px;
+  z-index: 1000;
+`;
+
+const FloatingButton = styled.button`
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -311,7 +345,6 @@ const FloatingButton = styled.button`
   justify-content: center;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
   transition: transform 0.2s, background-color 0.2s;
 
   &:hover {
@@ -331,24 +364,77 @@ const FloatingButton = styled.button`
   }
 `;
 
-const GestureHandle = styled.div`
-  width: 40px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 2px;
-  margin: 8px auto;
+const Tooltip = styled.div`
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: fadeIn 0.2s ease-in-out;
 
-  @media (min-width: 769px) {
-    display: none;
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    right: 23px;
+    width: 10px;
+    height: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    transform: rotate(45deg);
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 `;
 
-const MobileTip = styled.div`
-  text-align: center;
-  padding: 8px;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+// Optional: Add some nice animation when the tooltip appears
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+// Optional: You can also add a pulsing animation to the button when the page loads
+const pulse = keyframes`
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+`;
+
+// You can add this to the FloatingButton styled component if you want the pulse animation
+const FloatingButtonWithPulse = styled(FloatingButton)`
+  animation: ${pulse} 2s infinite;
+
+  &:hover {
+    animation: none;
+  }
 `;
 
 export default CommandPalette;

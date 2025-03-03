@@ -6,7 +6,7 @@ export const Hero = () => {
     const fullText = `const developer = {
     name: "Trenton Morrell",
     role: "Full Stack Developer",
-    skills: ["React", "Node.js", "AWS"]
+    skills: ["React", "Node.js", "AWS"] 
 };`;
 
     useEffect(() => {
