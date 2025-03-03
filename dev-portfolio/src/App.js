@@ -75,7 +75,6 @@ function App() {
           <Projects />
           <Contact />
         </MainContent>
-        <Footer />
       </AppContainer>
     </BrowserRouter>
   );
