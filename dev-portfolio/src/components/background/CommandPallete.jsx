@@ -151,7 +151,10 @@ const CommandPalette = ({ onCommand, settings }) => {
           onMouseLeave={() => setShowTooltip(false)}
         >
           <FloatingButton onClick={handleFloatingButtonTap}>⌘</FloatingButton>
-          {showTooltip && <Tooltip>Press {isMac ? "⌘" : "Ctrl"} + K</Tooltip>}
+          {showTooltip &&
+            !isMobile && ( 
+              <Tooltip>Press {isMac ? "⌘" : "Ctrl"} + K</Tooltip>
+            )}{" "}
         </FloatingButtonContainer>
       )}
 
