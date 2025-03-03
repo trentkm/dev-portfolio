@@ -152,7 +152,7 @@ export const Projects = () => {
 
                 <SkillsContainer>
                   {project.skills.map((skill, index) => (
-                    <SkillTag key={`\${project.id}-skill-\${index}`}>
+                    <SkillTag key={`${project.id}-skill-${index}`}>
                       {skill}
                     </SkillTag>
                   ))}
@@ -254,9 +254,9 @@ const FilterContainer = styled.div`
 
 const FilterButton = styled.button`
   padding: 8px 16px;
-  background: \${props => props.isActive ? 'rgba(99, 179, 237, 0.2)' : 'rgba(17, 25, 40, 0.7)'};
-  border: 1px solid \${props => props.isActive ? 'rgba(99, 179, 237, 0.6)' : 'rgba(99, 179, 237, 0.2)'};
-  color: \${props => props.isActive ? '#63b3ed' : 'rgba(255, 255, 255, 0.8)'};
+  background: ${props => props.isActive ? 'rgba(99, 179, 237, 0.2)' : 'rgba(17, 25, 40, 0.7)'};
+  border: 1px solid ${props => props.isActive ? 'rgba(99, 179, 237, 0.6)' : 'rgba(99, 179, 237, 0.2)'};
+  color: ${props => props.isActive ? '#63b3ed' : 'rgba(255, 255, 255, 0.8)'};
   border-radius: 30px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -286,7 +286,7 @@ const ProjectCard = styled.div`
   backdrop-filter: blur(10px);
   border: 1px solid rgba(99, 179, 237, 0.2);
   transition: all 0.3s ease;
-  animation: \${fadeIn} 0.5s ease-out forwards;
+  animation: ${fadeIn} 0.5s ease-out forwards;
   animation-fill-mode: both;
   
   &:hover {
@@ -316,13 +316,13 @@ const ProjectEmoji = styled.div`
 
 const CompanyBadge = styled.div`
   display: inline-block;
-  background: \${props => props.children === "Amazon" ? "rgba(255, 153, 0, 0.2)" : "rgba(66, 153, 225, 0.2)"};
-  color: \${props => props.children === "Amazon" ? "#FF9900" : "#4299E1"};
+  background: ${props => props.children === "Amazon" ? "rgba(255, 153, 0, 0.2)" : "rgba(66, 153, 225, 0.2)"};
+  color: ${props => props.children === "Amazon" ? "#FF9900" : "#4299E1"};
   padding: 4px 10px;
   border-radius: 4px;
   font-size: 0.8rem;
   font-weight: 500;
-  border: 1px solid \${props => props.children === "Amazon" ? "rgba(255, 153, 0, 0.3)" : "rgba(66, 153, 225, 0.3)"};
+  border: 1px solid ${props => props.children === "Amazon" ? "rgba(255, 153, 0, 0.3)" : "rgba(66, 153, 225, 0.3)"};
 `;
 
 const ProjectContent = styled.div`

@@ -162,7 +162,7 @@ const AboutContent = styled.div`
   display: flex;
   gap: 50px;
   margin-bottom: 50px;
-  animation: \${fadeIn} 0.6s ease-out forwards;
+  animation: ${fadeIn} 0.6s ease-out forwards;
   
   @media (max-width: 992px) {
     flex-direction: column;
@@ -177,7 +177,7 @@ const ImageContainer = styled.div`
   overflow: hidden;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(99, 179, 237, 0.3);
-  animation: \${float} 6s ease-in-out infinite;
+  animation: ${float} 6s ease-in-out infinite;
   
   @media (max-width: 992px) {
     width: 280px;

@@ -239,7 +239,7 @@ const ContactGrid = styled.div`
 `;
 
 const ContactInfo = styled.div`
-  animation: \${fadeIn} 0.6s ease-out forwards;
+  animation: ${fadeIn} 0.6s ease-out forwards;
 `;
 
 const ContactText = styled.p`
@@ -340,7 +340,7 @@ const SocialLink = styled.a`
 `;
 
 const ContactFormContainer = styled.div`
-  animation: \${fadeIn} 0.8s ease-out forwards;
+  animation: ${fadeIn} 0.8s ease-out forwards;
   animation-delay: 0.2s;
   opacity: 0;
   animation-fill-mode: forwards;
@@ -447,9 +447,9 @@ const StatusMessage = styled.div`
   padding: 10px 15px;
   border-radius: 6px;
   font-size: 0.9rem;
-  background: \${props => props.success ? 'rgba(72, 187, 120, 0.2)' : 'rgba(245, 101, 101, 0.2)'};
-  color: \${props => props.success ? '#48bb78' : '#f56565'};
-  border: 1px solid \${props => props.success ? 'rgba(72, 187, 120, 0.4)' : 'rgba(245, 101, 101, 0.4)'};
+  background: ${props => props.success ? 'rgba(72, 187, 120, 0.2)' : 'rgba(245, 101, 101, 0.2)'};
+  color: ${props => props.success ? '#48bb78' : '#f56565'};
+  border: 1px solid ${props => props.success ? 'rgba(72, 187, 120, 0.4)' : 'rgba(245, 101, 101, 0.4)'};
 `;
 
 export default Contact;
