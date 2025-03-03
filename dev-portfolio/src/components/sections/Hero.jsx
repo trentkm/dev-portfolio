@@ -2,10 +2,20 @@ import React, { useState, useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 
 export const Hero = () => {
-  const [text, setText] = useState("");
-  const [isTypingComplete, setIsTypingComplete] = useState(false);
-  const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
-  const fullText = `const developer = {
+  // Detect if mobile
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Modified code for mobile - shorter text
+  const fullTextDesktop = `const developer = {
   name: "Trent Morrell",
   role: "Software Engineer II at Amazon",
   expertise: ["React.js", "AWS Microservices", "Full Stack"],
@@ -14,8 +24,26 @@ export const Hero = () => {
   experience: "4+ years in industry-grade applications"
 };`;
 
+  const fullTextMobile = `const developer = {
+  name: "Trent Morrell",
+  role: "SDE II at Amazon",
+  expertise: [
+    "React.js", 
+    "AWS", 
+    "Full Stack"
+  ],
+  location: "Dallas, TX"
+};`;
+
+  const [text, setText] = useState("");
+  const [isTypingComplete, setIsTypingComplete] = useState(false);
+  const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
+
   useEffect(() => {
+    const fullText = isMobile ? fullTextMobile : fullTextDesktop;
     let currentIndex = 0;
+    setText(""); // Reset text when switching between mobile/desktop
+
     const timer = setInterval(() => {
       if (currentIndex <= fullText.length) {
         setText(fullText.slice(0, currentIndex));
@@ -30,7 +58,7 @@ export const Hero = () => {
     }, 40);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [isMobile]);
 
   const handleScrollToProjects = () => {
     document.getElementById("projects").scrollIntoView({
@@ -55,7 +83,7 @@ export const Hero = () => {
             <TerminalTitle>trent@portfolio ~ </TerminalTitle>
           </TerminalHeader>
           <TerminalBody>
-            <CodeText>{text}</CodeText>
+            <CodeText isMobile={isMobile}>{text}</CodeText>
             {!isTypingComplete && <Cursor>_</Cursor>}
 
             {isTypingComplete && (
@@ -80,7 +108,6 @@ export const Hero = () => {
                       <TerminalButton onClick={handleScrollToContact}>
                         Contact Me
                       </TerminalButton>
-                      
                     </ButtonContainer>
                   </OutputContainer>
                 )}
@@ -124,10 +151,13 @@ export const Hero = () => {
         </SocialLinks>
       </ContentWrapper>
 
-      <ScrollIndicator>
-        <MouseIcon />
-        <ScrollText>Scroll Down</ScrollText>
-      </ScrollIndicator>
+      {/* Only show scroll indicator on desktop */}
+      {!isMobile && (
+        <ScrollIndicator>
+          <MouseIcon />
+          <ScrollText>Scroll Down</ScrollText>
+        </ScrollIndicator>
+      )}
     </HeroSection>
   );
 };
@@ -246,6 +276,8 @@ const CodeText = styled.pre`
   text-shadow: 0 0 10px rgba(99, 179, 237, 0.3);
   font-size: 1rem;
   line-height: 1.5;
+  white-space: \${props => props.isMobile ? 'pre-wrap' : 'pre'}; /* Fixed text overflow */
+  word-break: \${props => props.isMobile ? 'break-word' : 'normal'};
 
   // Syntax highlighting
   .keyword {
@@ -259,7 +291,7 @@ const CodeText = styled.pre`
   }
 
   @media (max-width: 768px) {
-    font-size: 0.9rem;
+    font-size: 0.85rem; /* Slightly smaller for better fit */
   }
 `;
 
@@ -292,12 +324,12 @@ const CommandLine = styled.div`
 const Command = styled.span`
   color: white;
   margin-left: 5px;
-  animation: ${fadeIn} 0.5s ease forwards;
+  animation: \${fadeIn} 0.5s ease forwards;
 `;
 
 const OutputContainer = styled.div`
   margin-top: 20px;
-  animation: ${fadeIn} 0.6s ease forwards;
+  animation: \${fadeIn} 0.6s ease forwards;
 `;
 
 const OutputText = styled.p`
@@ -343,7 +375,7 @@ const SocialLinks = styled.div`
   display: flex;
   gap: 16px;
   margin-top: 24px;
-  animation: ${fadeIn} 0.8s ease forwards;
+  animation: \${fadeIn} 0.8s ease forwards;
   animation-delay: 0.5s;
   opacity: 0;
 `;
@@ -377,7 +409,7 @@ const ScrollIndicator = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  animation: ${fadeIn} 1s ease forwards;
+  animation: \${fadeIn} 1s ease forwards;
   animation-delay: 1.5s;
   opacity: 0;
 `;
@@ -399,7 +431,7 @@ const MouseIcon = styled.div`
     top: 8px;
     left: 50%;
     transform: translateX(-50%);
-    animation: ${bounce} 2s infinite;
+    animation: \${bounce} 2s infinite;
   }
 `;
 
