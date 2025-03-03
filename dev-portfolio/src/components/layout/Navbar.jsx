@@ -76,10 +76,10 @@ const NavContainer = styled.nav`
   right: 0;
   z-index: 100;
   transition: all 0.3s ease;
-  backdrop-filter: \${props => props.\$scrolled ? 'blur(10px)' : 'none'};
-  background: \${props => props.\$scrolled ? 'rgba(23, 23, 23, 0.8)' : 'transparent'};
-  box-shadow: \${props => props.\$scrolled ? '0 4px 30px rgba(0, 0, 0, 0.1)' : 'none'};
-  border-bottom: \${props => props.\$scrolled ? '1px solid rgba(255, 255, 255, 0.1)' : 'none'};
+  backdrop-filter: ${props => props.$scrolled ? 'blur(10px)' : 'none'};
+  background: ${props => props.$scrolled ? 'rgba(23, 23, 23, 0.8)' : 'transparent'};
+  box-shadow: ${props => props.$scrolled ? '0 4px 30px rgba(0, 0, 0, 0.1)' : 'none'};
+  border-bottom: ${props => props.$scrolled ? '1px solid rgba(255, 255, 255, 0.1)' : 'none'};
 `;
 
 const LogoContainer = styled.div`
@@ -112,7 +112,7 @@ const NavLinks = styled.ul`
     justify-content: center;
     align-items: center;
     gap: 3rem;
-    transform: \${props => props.\$menuOpen ? 'translateX(0)' : 'translateX(100%)'};
+    transform: ${props => props.$menuOpen ? 'translateX(0)' : 'translateX(100%)'};
     transition: transform 0.3s ease;
     z-index: 100;
   }
