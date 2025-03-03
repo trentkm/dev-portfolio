@@ -24,7 +24,7 @@ const Navbar = () => {
     <Nav isScrolled={isScrolled}>
       <NavContainer>
         <Logo href="/">
-          <LogoText>YourName</LogoText>
+          <LogoText>Trent Morrell</LogoText>
           <LogoDot>.</LogoDot>
         </Logo>
 
