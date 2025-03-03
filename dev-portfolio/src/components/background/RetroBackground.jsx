@@ -25,7 +25,27 @@ const RetroBackground = ({ settings }) => {
         <Snow
           $intensity={settings.snowIntensity}
           $windEffect={settings.windEffect}
-        />
+        >
+          <SnowLayer
+            $intensity={settings.snowIntensity}
+            $windEffect={settings.windEffect}
+            $opacity={0.9}
+            style={{ animationDelay: "0s" }}
+          />
+          <SnowLayer
+            $intensity={settings.snowIntensity}
+            $windEffect={settings.windEffect}
+            $opacity={0.7}
+            style={{ animationDelay: "-2s" }} // Changed from -5s to -2s
+          />
+          <SnowLayer
+            $intensity={settings.snowIntensity}
+            $windEffect={settings.windEffect}
+            $opacity={0.5}
+            style={{ animationDelay: "-4s" }} // Changed from -10s to -4s
+          />
+        </Snow>
+
         <Mountains>
           <Mountain />
           <Mountain style={{ left: "30%", height: "180px" }} />
@@ -237,70 +257,57 @@ const Snow = styled.div.attrs((props) => ({
   $intensity: props.$intensity || 1,
   $windEffect: props.$windEffect || false,
 }))`
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  pointer-events: none;
+  overflow: hidden;
+`;
+
+const SnowLayer = styled.div`
   position: absolute;
   width: 100%;
-  height: 100%;
-  pointer-events: none;
-
-  &::before,
-  &::after,
-  & {
-    content: "";
-    position: fixed;
-    top: -100vh;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: ${({ $intensity }) => {
-      let shadows = [];
-      const numberOfSnowflakes = Math.floor(20 * ($intensity || 1)); // Added fallback for intensity
-      for (let i = 0; i < numberOfSnowflakes; i++) {
-        const x = Math.floor(Math.random() * 100);
-        const y = Math.floor(Math.random() * 100);
-        const size = Math.random() * 6 + 4; // Sizes between 4-10px
-        shadows.push(`radial-gradient(${size}px ${size}px at ${x}vw ${y}vh, 
-          rgba(255, 255, 255, 1), 
-          rgba(255, 255, 255, 0.8) 40%, 
-          rgba(255, 255, 255, 0.2) 70%,
-          transparent 100%)`);
-      }
-      return shadows.join(",");
-    }};
-    opacity: 0.9;
-    animation: ${({ $windEffect }) => ($windEffect ? snowfallWind : snowfall)}
-      ${({ $intensity }) => Math.max(3, 15 / ($intensity || 1))}s linear
-      infinite;
-  }
-
-  &::before {
-    animation-delay: -${({ $intensity }) => Math.max(2, 5 / ($intensity || 1))}s;
-    opacity: 0.7;
-  }
-
-  &::after {
-    animation-delay: -${({ $intensity }) => Math.max(1, 10 / ($intensity || 1))}s;
-    opacity: 0.5;
-  }
+  height: 100vh;
+  top: -100vh; // Start above viewport
+  left: 0;
+  background-image: ${({ $intensity }) => {
+    let shadows = [];
+    const numberOfSnowflakes = Math.floor(20 * ($intensity || 1));
+    for (let i = 0; i < numberOfSnowflakes; i++) {
+      const x = Math.floor(Math.random() * 100);
+      const y = Math.floor(Math.random() * 100); // Keep snowflakes within layer height
+      const size = Math.random() * 6 + 4;
+      shadows.push(`radial-gradient(${size}px ${size}px at ${x}vw ${y}vh, 
+        rgba(255, 255, 255, 1), 
+        rgba(255, 255, 255, 0.8) 40%, 
+        rgba(255, 255, 255, 0.2) 70%,
+        transparent 100%)`);
+    }
+    return shadows.join(",");
+  }};
+  opacity: ${(props) => props.$opacity || 0.9};
+  will-change: transform;
+  animation: ${({ $windEffect }) => ($windEffect ? snowfallWind : snowfall)}
+    ${({ $intensity }) => Math.max(3, 15 / ($intensity || 1))}s linear infinite;
 `;
 
 const snowfall = keyframes`
-  from {
-    transform: translateY(-10%);
+  0% {
+    transform: translateY(0);
   }
-  to {
-    transform: translateY(110%);
+  100% {
+    transform: translateY(200vh); // Move down two viewport heights
   }
 `;
 
 const snowfallWind = keyframes`
-  from {
-    transform: translate(-5%, -10%);
+  0% {
+    transform: translate(0, 0);
   }
-  to {
-    transform: translate(15%, 110%);
+  100% {
+    transform: translate(15vw, 200vh);
   }
 `;
-
 
 const Ground = styled.div`
   position: absolute;
