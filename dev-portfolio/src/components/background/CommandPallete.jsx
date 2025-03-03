@@ -11,6 +11,12 @@ const CommandPalette = ({ onCommand, settings }) => {
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [lastCommand, setLastCommand] = useState(null);
   const [lastTap, setLastTap] = useState(0);
+  const [isInputEnabled, setIsInputEnabled] = useState(!isMobile);
+
+  const handleClose = () => {
+    setIsOpen(false);
+    setIsInputEnabled(!isMobile);
+  };
 
   const commands = [
     {
@@ -63,7 +69,7 @@ const CommandPalette = ({ onCommand, settings }) => {
           setSelectedIndex(0);
         }
       } else if (e.key === "Escape") {
-        setIsOpen(false);
+        handleClose();
       } else if (isOpen) {
         if (e.key === "ArrowDown") {
           e.preventDefault();
@@ -111,7 +117,7 @@ const CommandPalette = ({ onCommand, settings }) => {
     console.log("Command selected:", commandId);
     setLastCommand(commandId);
     onCommand(commandId);
-    setIsOpen(false);
+    handleClose();
     setSearch("");
     triggerHapticFeedback();
   };
@@ -128,7 +134,7 @@ const CommandPalette = ({ onCommand, settings }) => {
 
   const handleTouchEnd = () => {
     if (swipeOffset > 100) {
-      setIsOpen(false);
+      handleClose();
     }
     setSwipeOffset(0);
     setSwipeStart(null);
@@ -141,7 +147,7 @@ const CommandPalette = ({ onCommand, settings }) => {
   }
 
   return (
-    <Overlay onClick={() => setIsOpen(false)}>
+    <Overlay onClick={handleClose}>
       <Container
         onClick={(e) => e.stopPropagation()}
         onTouchStart={handleTouchStart}
@@ -155,8 +161,18 @@ const CommandPalette = ({ onCommand, settings }) => {
           placeholder="Type a command..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          autoFocus
+          readOnly={isMobile && !isInputEnabled}
+          autoFocus={!isMobile}
+          onClick={() => {
+            if (isMobile) {
+              setIsInputEnabled(true);
+              // Optional: focus the input when clicked
+              // You might want to test if this behavior feels right on mobile
+              // e.target.focus();
+            }
+          }}
         />
+
         <CommandList>
           {filteredCommands.map((command, index) => (
             <CommandItem
@@ -228,9 +244,17 @@ const SearchInput = styled.input`
   color: white;
   font-size: 16px;
   outline: none;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  user-select: none; /* Standard */
 
   &::placeholder {
     color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Optional: style for when the input is readonly */
+  &[readonly] {
+    cursor: default;
   }
 `;
 
