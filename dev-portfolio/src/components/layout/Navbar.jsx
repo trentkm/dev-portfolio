@@ -1,248 +1,163 @@
+// Navbar.jsx
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-scroll';
 
 const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  // Handle navbar background change on scroll
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setScrolled(window.scrollY > 50);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const navItems = [
+    { name: 'Home', to: 'hero' },
+    { name: 'About', to: 'about' },
+    { name: 'Skills', to: 'skills' },
+    { name: 'Projects', to: 'projects' },
+    { name: 'Contact', to: 'contact' }
+  ];
+
   return (
-    <Nav isScrolled={isScrolled}>
-      <NavContainer>
-        <Logo href="/">
-          <LogoText>Trent Morrell</LogoText>
-          <LogoDot>.</LogoDot>
-        </Logo>
-
-        <MenuButton onClick={() => setIsOpen(!isOpen)}>
-          <MenuIcon isOpen={isOpen}>
-            <span></span>
-            <span></span>
-            <span></span>
-          </MenuIcon>
-        </MenuButton>
-
-        <NavItems isOpen={isOpen}>
-          <NavItem>
-            <NavLink href="#home" onClick={() => setIsOpen(false)}>
-              Home
-              <LinkOverlay />
+    <NavContainer $scrolled={scrolled}>
+      <LogoContainer>
+        <LogoText>YD</LogoText>
+      </LogoContainer>
+      
+      <MobileMenuButton onClick={() => setMenuOpen(!menuOpen)}>
+        <span></span>
+        <span></span>
+        <span></span>
+      </MobileMenuButton>
+      
+      <NavLinks $menuOpen={menuOpen}>
+        {navItems.map(item => (
+          <NavItem key={item.name}>
+            <NavLink
+              to={item.to}
+              smooth={true}
+              duration={500}
+              spy={true}
+              activeClass="active"
+              onClick={() => setMenuOpen(false)}
+            >
+              {item.name}
             </NavLink>
           </NavItem>
-          <NavItem>
-            <NavLink href="#about" onClick={() => setIsOpen(false)}>
-              About
-              <LinkOverlay />
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink href="#projects" onClick={() => setIsOpen(false)}>
-              Projects
-              <LinkOverlay />
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink href="#contact" onClick={() => setIsOpen(false)}>
-              Contact
-              <LinkOverlay />
-            </NavLink>
-          </NavItem>
-          <ResumeButton href="/resume.pdf" target="_blank">
-            Resume
-          </ResumeButton>
-        </NavItems>
-      </NavContainer>
-    </Nav>
+        ))}
+      </NavLinks>
+    </NavContainer>
   );
 };
 
-const Nav = styled.nav`
+const NavContainer = styled.nav`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 70px;
-  z-index: 1000;
+  z-index: 100;
   transition: all 0.3s ease;
-  background: ${props => props.isScrolled ? 'rgba(10, 25, 47, 0.85)' : 'transparent'};
-  backdrop-filter: ${props => props.isScrolled ? 'blur(10px)' : 'none'};
-  box-shadow: ${props => props.isScrolled ? '0 2px 10px rgba(0, 0, 0, 0.1)' : 'none'};
+  backdrop-filter: \${props => props.\$scrolled ? 'blur(10px)' : 'none'};
+  background: \${props => props.\$scrolled ? 'rgba(23, 23, 23, 0.8)' : 'transparent'};
+  box-shadow: \${props => props.\$scrolled ? '0 4px 30px rgba(0, 0, 0, 0.1)' : 'none'};
+  border-bottom: \${props => props.\$scrolled ? '1px solid rgba(255, 255, 255, 0.1)' : 'none'};
 `;
 
-const NavContainer = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-  height: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+const LogoContainer = styled.div`
+  z-index: 101;
 `;
 
-const Logo = styled.a`
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  font-size: 1.5rem;
+const LogoText = styled.h1`
+  font-size: 1.8rem;
   font-weight: 700;
-  color: #fff;
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-  }
+  color: white;
+  margin: 0;
+  letter-spacing: 1px;
 `;
 
-const LogoText = styled.span`
-  background: linear-gradient(45deg, #2ecc71, #3498db);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-`;
-
-const LogoDot = styled.span`
-  color: #2ecc71;
-  margin-left: 2px;
-`;
-
-const MenuButton = styled.button`
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  z-index: 1000;
-
-  @media (max-width: 768px) {
-    display: block;
-  }
-`;
-
-const MenuIcon = styled.div`
-  width: 24px;
-  height: 24px;
-  position: relative;
-  transform: rotate(0deg);
-  transition: 0.5s ease-in-out;
-  cursor: pointer;
-
-  span {
-    display: block;
-    position: absolute;
-    height: 2px;
-    width: 100%;
-    background: #fff;
-    border-radius: 9px;
-    opacity: 1;
-    left: 0;
-    transform: rotate(0deg);
-    transition: 0.25s ease-in-out;
-
-    &:nth-child(1) {
-      top: ${props => props.isOpen ? '10px' : '0px'};
-      transform: ${props => props.isOpen ? 'rotate(135deg)' : 'rotate(0)'};
-    }
-
-    &:nth-child(2) {
-      top: 10px;
-      opacity: ${props => props.isOpen ? '0' : '1'};
-    }
-
-    &:nth-child(3) {
-      top: ${props => props.isOpen ? '10px' : '20px'};
-      transform: ${props => props.isOpen ? 'rotate(-135deg)' : 'rotate(0)'};
-    }
-  }
-`;
-
-const NavItems = styled.ul`
+const NavLinks = styled.ul`
   display: flex;
-  align-items: center;
   gap: 2rem;
   list-style: none;
   margin: 0;
   padding: 0;
-
+  
   @media (max-width: 768px) {
     position: fixed;
-    top: 0;
-    right: 0;
-    height: 100vh;
-    width: 75%;
-    max-width: 300px;
     flex-direction: column;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(23, 23, 23, 0.95);
     justify-content: center;
-    background: rgba(10, 25, 47, 0.95);
-    backdrop-filter: blur(10px);
-    transform: ${props => props.isOpen ? 'translateX(0)' : 'translateX(100%)'};
-    transition: transform 0.3s ease-in-out;
-    padding: 2rem;
-    box-shadow: -10px 0px 30px rgba(0, 0, 0, 0.1);
+    align-items: center;
+    gap: 3rem;
+    transform: \${props => props.\$menuOpen ? 'translateX(0)' : 'translateX(100%)'};
+    transition: transform 0.3s ease;
+    z-index: 100;
   }
 `;
 
-const NavItem = styled.li`
-  position: relative;
-`;
+const NavItem = styled.li``;
 
-const NavLink = styled.a`
-  color: #fff;
+const NavLink = styled(Link)`
+  color: white;
   text-decoration: none;
   font-size: 1rem;
   font-weight: 500;
-  padding: 0.5rem;
-  transition: all 0.3s ease;
-  position: relative;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  cursor: pointer;
   
   &:hover {
-    color: #2ecc71;
+    background: rgba(255, 255, 255, 0.1);
   }
-`;
-
-const LinkOverlay = styled.span`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: #2ecc71;
-  transition: width 0.3s ease;
-
-  ${NavLink}:hover & {
-    width: 100%;
+  
+  &.active {
+    font-weight: 700;
+    background: rgba(46, 204, 113, 0.2);
   }
-`;
-
-const ResumeButton = styled.a`
-  padding: 0.75rem 1.5rem;
-  border: 2px solid #2ecc71;
-  border-radius: 4px;
-  color: #2ecc71;
-  text-decoration: none;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  background: transparent;
-
-  &:hover {
-    background: rgba(46, 204, 113, 0.1);
-    transform: translateY(-2px);
-  }
-
+  
   @media (max-width: 768px) {
-    margin-top: 2rem;
+    font-size: 1.5rem;
+    padding: 1rem 2rem;
+  }
+`;
+
+const MobileMenuButton = styled.button`
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 101;
+  
+  span {
+    width: 30px;
+    height: 3px;
+    background-color: white;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+  }
+  
+  @media (max-width: 768px) {
+    display: flex;
   }
 `;
 
