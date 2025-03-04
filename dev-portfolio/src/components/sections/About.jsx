@@ -32,7 +32,7 @@ export const About = () => {
             <AboutText>
               I'm passionate about clean code, thoughtful architecture, and
               creating software that makes a meaningful impact. When I'm not
-              coding, you'll find me exploring new technologies, playing guitar,
+              coding, you'll find me exploring new technologies, playing soccer,
               or enjoying outdoor activities in Dallas.
             </AboutText>
 
